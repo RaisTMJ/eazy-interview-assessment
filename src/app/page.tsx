@@ -77,7 +77,7 @@ const PortfolioPage = () => {
               </Link>
 
               <Link
-                href="https://github.com/RaisTMJ/eazy-interview-backend"
+                href="https://github.com/RaisTMJ/InteviewEazy"
                 target="_blank"
                 className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg transition-colors duration-200 border border-slate-600/50"
               >
