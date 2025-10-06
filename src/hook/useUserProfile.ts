@@ -1,6 +1,6 @@
 "use client";
 import { getUserProfile } from "@/lib/userService";
-import { LoadingState, Action } from "@/type/LoadingState";
+import { LoadingState, Action } from "@/type/loadingState";
 import {  useEffect, useReducer } from "react";
 
 

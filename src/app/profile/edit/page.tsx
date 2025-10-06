@@ -14,22 +14,22 @@ export default  function EditProfilePage() {
   const { user, loading, error } = useUserProfile();
   const navigate = useRouter();
 
-  const [profileImage, setProfileImage]  =useState(user?.profileImageUrl || null);
-    const [newImageFile, setNewImageFile] = useState(null);
+  const [profileImage, setProfileImage] = useState(user?.profileImageUrl || null);
+  const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
-  const handleImageError = (err: any) => {
-    err.currentTarget.src = "public\placeholder-300x200.webp"
+  const handleImageError = (err: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    err.currentTarget.src = "/placeholder-300x200.webp"
   }
   
 
   const handleButtonClick = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   }
 
-  const handleFileChange = (file: any) => {
+  const handleFileChange = (file: File) => {
     if (file && file.type.startsWith('image/')) {
       setNewImageFile(file);
       // Create a temporary URL to preview the image
@@ -39,27 +39,27 @@ export default  function EditProfilePage() {
     }
   };
 
-  const handleFileSelect = (event: any) => {
-    const file = event.target.files[0];
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       handleFileChange(file);
-    };
+    }
   }
 
-  const handleDragOver = (event: any) => {
+  const handleDragOver = (event: React.DragEvent<HTMLFormElement>) => {
     console.log("drag over", event);
     event.preventDefault();
     setIsDragging(true);
   }
 
-  const handleDragLeave = (event: any) => {
+  const handleDragLeave = (event: React.DragEvent<HTMLFormElement>) => {
     console.log("drag leave", event);
     event.preventDefault();
     setIsDragging(false);
   }
 
-    const handleDrop = (e: any) => {
-      console.log("drag drop", e);
+  const handleDrop = (e: React.DragEvent<HTMLFormElement>) => {
+    console.log("drag drop", e);
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
@@ -67,7 +67,7 @@ export default  function EditProfilePage() {
       handleFileChange(file);
     }
   };
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     let submitStatus: boolean = false;
 
@@ -77,21 +77,22 @@ export default  function EditProfilePage() {
     }
 
     // form data changes
-      const formElements = event.target.elements;
-      const updatedProfile = {
-        firstName: formElements.firstName.value,
-        lastName: formElements.lastName.value,
-      };
-      if(updatedProfile.firstName !== user?.firstName || updatedProfile.lastName !== user?.lastName){
-        await updateUserProfile(updatedProfile);
+    const formElements = event.currentTarget.elements as HTMLFormControlsCollection & {
+      firstName: HTMLInputElement;
+      lastName: HTMLInputElement;
+    };
+    const updatedProfile = {
+      firstName: formElements.firstName.value,
+      lastName: formElements.lastName.value,
+    };
+    if(updatedProfile.firstName !== user?.firstName || updatedProfile.lastName !== user?.lastName){
+      await updateUserProfile(updatedProfile);
       submitStatus = true;
-      }
-      if (submitStatus) {
-        alert('Profile updated successfully!');
-        navigate.replace('/profile');
-      }
-
-
+    }
+    if (submitStatus) {
+      alert('Profile updated successfully!');
+      navigate.replace('/profile');
+    }
   }
 
   if(loading){
@@ -108,7 +109,7 @@ if(user != null && user.email != null){
 
   let imageUrl = user.profileImageUrl;
   if(imageUrl === null || imageUrl === undefined || imageUrl === ""){
-    imageUrl = "/public/placeholder-300x200.webp";
+    imageUrl = "/placeholder-300x200.webp";
   }
 
   return (
@@ -133,18 +134,15 @@ if(user != null && user.email != null){
           <div className="flex flex-col items-center sm:flex-row sm:items-start gap-5">
             <div 
               className={`relative rounded-full p-1 border-2 ${isDragging ? 'border-brand-primary border-dashed' : 'border-transparent'}`}
-
             >
-
-              {(
               <Image 
-              width={96} height={96}
-                src={imageUrl}
+                width={96} 
+                height={96}
+                src={profileImage || imageUrl}
                 alt="Profile Preview"
                 onError={handleImageError}
-                className="h-24 w-24 rounded-full object-cover pointers-events-none"
+                className="h-24 w-24 rounded-full object-cover pointer-events-none"
               />
-              )}
               {isDragging && (
                 <div className="absolute inset-0 bg-brand-primary-light bg-opacity-50 rounded-full flex items-center justify-center">
                   <p className="text-white font-semibold text-sm">Drop Image</p>
@@ -224,20 +222,12 @@ if(user != null && user.email != null){
 }
 
   if(error){
-
     return (
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <p className="text-lg">loading profile ... </p>
+      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+        <p className="text-red-500">{error}</p>
       </main>
-        );
-      }
-      if(error){
+    );
+  }
 
-        return (
-          <main className="flex min-h-screen flex-col item-center justify-center p-24">
-            <p className="text-red-500">{error}</p>
-          </main>
-        );
-      }
-
+  return null; // fallback case
 }

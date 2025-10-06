@@ -1,15 +1,14 @@
 
-import { UserInterface } from "@/store/userSlice";
+import { UserProfile } from "@/type/userProfile";
 import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 import { logoutUser } from "@/lib/authService";
-import ProfilePage from '../../app/profile/page';
 
 
 
-export default function ProfilePageUI({ user }: { user: UserInterface }) {
+export default function ProfilePageUI({ user }: { user: UserProfile }) {
 
   const navigate = useRouter();
 

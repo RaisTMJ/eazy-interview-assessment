@@ -21,9 +21,10 @@ const apiMultipart = axios.create({
 });
 
 // 4. Define the shared error handling logic in a single function
-const responseErrorHandler = (error: any) => {
-  if (error.response) {
-    const { status } = error.response;
+const responseErrorHandler = (error: unknown) => {
+  if (error && typeof error === 'object' && 'response' in error) {
+    const axiosError = error as { response: { status: number } };
+    const { status } = axiosError.response;
 
     if (status === 401) {
       console.log("Unauthorized request. Logging out.");

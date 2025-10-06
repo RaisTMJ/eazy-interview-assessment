@@ -17,7 +17,6 @@ export  function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [profile, setProfile] = useState(initialProfile);
-const [isLoading, setIsLoading] = useState(true);
 
     const handleSession = () => {
 
@@ -37,8 +36,7 @@ useEffect(() => {
       setProfile(data);
     } catch (error) {
       // You could set an error state here as well
-    } finally {
-      setIsLoading(false);
+      console.error('Failed to fetch user profile:', error);
     }
   };
 
@@ -53,7 +51,7 @@ const navigateTo = (route: string) => {
 
 
 
-  const handleImageError = (e) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src = 'https://via.placeholder.com/150';
   };
 
